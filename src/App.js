@@ -1,9 +1,8 @@
-import "./App.css";
 import Authentication from "./Pages/Authentication/Authentication";
 
 function App() {
   return (
-    <div className="">
+    <div>
       <Authentication />
     </div>
   );
