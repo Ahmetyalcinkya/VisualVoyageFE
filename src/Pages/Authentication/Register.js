@@ -26,10 +26,17 @@ const validationSchema = {
 };
 const Register = () => {
   const [formValues, setFormValues] = useState();
+  const [gender, setGender] = useState(null);
 
   const submitHandler = (values) => {
+    values.gender = gender;
     console.log("submit handler", values);
   };
+
+  const changeHandler = (e) => {
+    setGender(e.target.value);
+  };
+
   return (
     <>
       <Formik
@@ -100,7 +107,12 @@ const Register = () => {
               />
             </div>
             <div>
-              <RadioGroup row aria-label="gender" name="gender">
+              <RadioGroup
+                onChange={changeHandler}
+                row
+                aria-label="gender"
+                name="gender"
+              >
                 <FormControlLabel
                   value="female"
                   control={<Radio />}
