@@ -1,8 +1,10 @@
 import { Button, TextField } from "@mui/material";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
+import { loginUserAction } from "../../Redux/Auth/auth.action";
 
 const initialValues = {
   email: "",
@@ -20,15 +22,17 @@ const validationSchema = {
 const Login = () => {
   const [formValues, setFormValues] = useState();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const submitHandler = (values) => {
     console.log("submit handler", values);
+    dispatch(loginUserAction({ data: values }));
   };
   return (
     <>
       <Formik
         onSubmit={submitHandler}
-        validationSchema={validationSchema}
+        // validationSchema={validationSchema}
         initialValues={initialValues}
       >
         <Form className="space-y-5">
