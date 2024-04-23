@@ -1,6 +1,7 @@
 import { Button, TextField } from "@mui/material";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 
 const initialValues = {
@@ -15,8 +16,10 @@ const validationSchema = {
     .min(6, "Password must be at least 6 characters")
     .required("Please enter your password"),
 };
+
 const Login = () => {
   const [formValues, setFormValues] = useState();
+  const navigate = useNavigate();
 
   const submitHandler = (values) => {
     console.log("submit handler", values);
@@ -72,6 +75,10 @@ const Login = () => {
           </Button>
         </Form>
       </Formik>
+      <div className="flex gap-2 pt-2 items-center justify-center">
+        <p>Don't have an account ? </p>
+        <Button onClick={() => navigate("/register")}>Register</Button>
+      </div>
     </>
   );
 };
