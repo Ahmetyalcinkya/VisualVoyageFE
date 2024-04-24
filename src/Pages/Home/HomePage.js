@@ -1,6 +1,6 @@
 import { Grid } from "@mui/material";
 import React from "react";
-import Sidebar from "../../Components/Sidebar";
+import Sidebar from "../../Components/Sidebar/Sidebar";
 import { Route, Routes, useLocation } from "react-router-dom";
 import MiddlePart from "../../Components/MiddlePart/MiddlePart";
 import Reels from "../../Components/Reels/Reels";
