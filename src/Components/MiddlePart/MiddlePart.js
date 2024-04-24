@@ -5,6 +5,7 @@ import StoryCircle from "./StoryCircle";
 import ImageIcon from "@mui/icons-material/Image";
 import VideoLibraryIcon from "@mui/icons-material/VideoLibrary";
 import ArticleIcon from "@mui/icons-material/Article";
+import PostCard from "../Post/PostCard";
 
 const users = [5, 6, 7, 2, 7, 98];
 
@@ -58,6 +59,9 @@ const MiddlePart = () => {
           </div>
         </div>
       </Card>
+      <div className="mt-5 space-y-5">
+        <PostCard />
+      </div>
     </div>
   );
 };
