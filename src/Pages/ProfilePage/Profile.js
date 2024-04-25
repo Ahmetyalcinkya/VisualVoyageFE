@@ -24,6 +24,7 @@ const tabs = [
 ];
 const posts = [1, 2, 3, 4, 5];
 const reels = [1, 2, 3, 4, 5];
+const savedPosts = [1, 2, 3, 4, 5];
 
 const Profile = () => {
   const { id } = useParams();
@@ -115,6 +116,16 @@ const Profile = () => {
                 ))}
               </div>
             )}
+            {value === "saved" && (
+              <div className="space-y-5 w-[70%] my-10">
+                {savedPosts.map((post) => (
+                  <div className="border border-slate-100 rounded-lg">
+                    <PostCard post={post} />
+                  </div>
+                ))}
+              </div>
+            )}
+            {value === "repost" && <h4>Repost</h4>}
           </div>
         </section>
       </div>
