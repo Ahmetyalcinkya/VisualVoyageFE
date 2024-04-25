@@ -8,6 +8,7 @@ import ArticleIcon from "@mui/icons-material/Article";
 import PostCard from "../Post/PostCard";
 
 const users = [5, 6, 7, 2, 7, 98];
+const posts = [5, 6, 7, 2, 7];
 
 const MiddlePart = () => {
   // Users will be fetched in here and send to StoryCircle
@@ -60,7 +61,9 @@ const MiddlePart = () => {
         </div>
       </Card>
       <div className="mt-5 space-y-5">
-        <PostCard />
+        {posts.map((post) => (
+          <PostCard post={post} />
+        ))}
       </div>
     </div>
   );

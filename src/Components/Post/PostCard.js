@@ -18,7 +18,7 @@ import ChatIcon from "@mui/icons-material/Chat";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
 
-const PostCard = () => {
+const PostCard = ({ post }) => {
   return (
     <Card className="">
       <CardHeader
