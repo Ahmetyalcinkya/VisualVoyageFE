@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import PostCard from "../../Components/Post/PostCard";
 import UserReelCard from "../../Components/Reels/UserReelCard";
+import { useSelector } from "react-redux";
+import ProfileModal from "./ProfileModal";
 
 const tabs = [
   {
@@ -27,8 +29,12 @@ const reels = [1, 2, 3, 4, 5];
 const savedPosts = [1, 2, 3, 4, 5];
 
 const Profile = () => {
-  const { id } = useParams();
+  const { user } = useSelector((store) => store.auth);
   const [value, setValue] = useState("post");
+
+  const [open, setOpen] = useState(false);
+  const openHandler = () => setOpen(true);
+  const closeHandler = () => setOpen(false);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -52,7 +58,11 @@ const Profile = () => {
           />
           {/* User profile picture will be here! */}
           {true ? (
-            <Button sx={{ borderRadius: "1.25rem" }} variant="outlined">
+            <Button
+              onClick={openHandler}
+              sx={{ borderRadius: "1.25rem" }}
+              variant="outlined"
+            >
               Edit Profile
             </Button>
           ) : (
@@ -63,18 +73,21 @@ const Profile = () => {
         </div>
         <div className="p-5">
           <div className="">
-            <h1 className="py-1 font-bold text-xl">Ahmet Can Yalçınkaya</h1>
-            {/* User full name will be here! */}
-            <h1>@Ahmetyalcinkya</h1>
-            {/* Username will be here! */}
+            <h1 className="py-1 font-bold text-xl">
+              {user.firstName + " " + user.lastName}
+              {/* User full name will be here! */}
+            </h1>
+            <h1>
+              @
+              {user.firstName.toLowerCase() + "_" + user.lastName.toLowerCase()}{" "}
+              {/* Username will be here! */}
+            </h1>
           </div>
           <div className="flex gap-5 items-center py-3">
             <span>24 posts</span>
             {/* PostCount will be here! */}
-            <span>512 followers</span>
-            {/* FollowerCount will be here! */}
-            <span>512 followings</span>
-            {/* FollowingCount will be here! */}
+            <span>{user.followers.length} Followers</span>
+            <span>{user.followings.length} followings</span>
           </div>
 
           <div className="">
@@ -129,6 +142,9 @@ const Profile = () => {
           </div>
         </section>
       </div>
+      <section>
+        <ProfileModal open={open} closeHandler={closeHandler} />
+      </section>
     </Card>
   );
 };
