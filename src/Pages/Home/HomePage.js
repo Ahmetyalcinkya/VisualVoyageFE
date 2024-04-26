@@ -1,15 +1,19 @@
 import { Grid } from "@mui/material";
 import React from "react";
-import Sidebar from "../../Components/Sidebar/Sidebar";
 import { Route, Routes, useLocation } from "react-router-dom";
-import MiddlePart from "../../Components/MiddlePart/MiddlePart";
-import Reels from "../../Components/Reels/Reels";
-import CreateReelsForm from "../../Components/Reels/CreateReelsForm";
-import Profile from "../ProfilePage/Profile";
 import HomeRight from "../../Components/HomeRight/HomeRight";
+import MiddlePart from "../../Components/MiddlePart/MiddlePart";
+import CreateReelsForm from "../../Components/Reels/CreateReelsForm";
+import Reels from "../../Components/Reels/Reels";
+import Sidebar from "../../Components/Sidebar/Sidebar";
+import Profile from "../ProfilePage/Profile";
+import { useSelector } from "react-redux";
 
 const HomePage = () => {
   const location = useLocation();
+  const { auth } = useSelector((store) => store);
+  console.log("auth", auth);
+
   return (
     <div className="px-20">
       <Grid container spacing={0}>
