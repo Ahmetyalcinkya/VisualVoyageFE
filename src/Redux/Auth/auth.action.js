@@ -72,7 +72,7 @@ export const getUserProfileAction = (jwt) => async (dispatch) => {
 export const updateUserProfileAction = (reqData) => async (dispatch) => {
   dispatch({ type: UPDATE_USER_PROFILE_REQUEST });
   try {
-    const { data } = await api.post(`${API_BASE_URL}/api/users/`, reqData);
+    const { data } = await api.put(`${API_BASE_URL}/api/users/`, reqData);
     console.log("---- Update User profile success:", data);
     dispatch({ type: UPDATE_USER_PROFILE_SUCCESS, payload: data });
   } catch (error) {

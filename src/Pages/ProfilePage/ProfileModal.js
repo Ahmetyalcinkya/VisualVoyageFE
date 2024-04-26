@@ -26,10 +26,6 @@ const style = {
 const ProfileModal = ({ open, closeHandler }) => {
   const dispatch = useDispatch();
 
-  const submitHandler = (values) => {
-    console.log("values", values);
-  };
-
   const formik = useFormik({
     initialValues: {
       firstName: "",
@@ -37,6 +33,7 @@ const ProfileModal = ({ open, closeHandler }) => {
     },
     onSubmit: (values) => {
       dispatch(updateUserProfileAction(values));
+      closeHandler();
     },
   });
 
@@ -52,14 +49,12 @@ const ProfileModal = ({ open, closeHandler }) => {
           <form onSubmit={formik.handleSubmit}>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <IconButton onclick={closeHandler}>
+                <IconButton onClick={closeHandler}>
                   <CloseIcon />
                 </IconButton>
                 <p>Edit Profile</p>
               </div>
-              <Button onclick={formik.onSubmit} type="submit">
-                Save
-              </Button>
+              <Button type="submit">Save</Button>
             </div>
             <div>
               <div className="h-[15rem]">
