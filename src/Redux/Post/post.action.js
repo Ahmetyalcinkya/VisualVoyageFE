@@ -29,9 +29,9 @@ export const createPostAction = (postData) => async (dispatch) => {
 export const getAllPostsAction = () => async (dispatch) => {
   dispatch({ type: GET_ALL_POSTS_REQUEST });
   try {
-    const data = await api.get("/posts/all");
-    dispatch({ type: GET_ALL_POSTS_SUCCESS, payload: data });
-    console.log("Get all posts :", data);
+    const posts = await api.get("/posts/all");
+    dispatch({ type: GET_ALL_POSTS_SUCCESS, payload: posts.data });
+    console.log("Get all posts :", posts.data);
   } catch (error) {
     console.log("Get all posts error :", error);
     dispatch({ type: GET_ALL_POSTS_FAILURE, payload: error });

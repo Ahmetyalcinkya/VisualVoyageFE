@@ -1,5 +1,5 @@
 import { Avatar, Card, IconButton } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import StoryCircle from "./StoryCircle";
 import ImageIcon from "@mui/icons-material/Image";
@@ -7,19 +7,25 @@ import VideoLibraryIcon from "@mui/icons-material/VideoLibrary";
 import ArticleIcon from "@mui/icons-material/Article";
 import PostCard from "../Post/PostCard";
 import CreatePostModal from "../CreatePost/CreatePostModal";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllPostsAction } from "../../Redux/Post/post.action";
 
 const users = [5, 6, 7, 2, 7, 98];
-const posts = [5, 6, 7, 2, 7];
 
 const MiddlePart = () => {
   // Users will be fetched in here and send to StoryCircle
   const [open, setOpen] = useState(false);
+  const dispatch = useDispatch();
+  const { posts } = useSelector((store) => store.post);
 
   const closeHandler = () => setOpen(false);
   const openCreatePostModalHandler = () => {
     setOpen(true);
   };
 
+  useEffect(() => {
+    dispatch(getAllPostsAction());
+  }, []);
   return (
     <div className="px-20">
       <section className="flex justify-center items-center p-5 rounded-b-lg">
@@ -75,9 +81,7 @@ const MiddlePart = () => {
         </div>
       </Card>
       <div className="mt-5 space-y-5">
-        {posts.map((post) => (
-          <PostCard post={post} />
-        ))}
+        {posts.length > 0 && posts?.map((post) => <PostCard post={post} />)}
       </div>
       <div>
         <CreatePostModal open={open} closeHandler={closeHandler} />

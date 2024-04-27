@@ -10,10 +10,11 @@ import {
 } from "@mui/material";
 import { useFormik } from "formik";
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import ImageIcon from "@mui/icons-material/Image";
 import VideoLibraryIcon from "@mui/icons-material/VideoLibrary";
 import { uploadToCloudinary } from "../../Utils/uploadToCloudinary";
+import { createPostAction } from "../../Redux/Post/post.action";
 
 const style = {
   position: "absolute",
@@ -32,6 +33,7 @@ const CreatePostModal = ({ open, closeHandler }) => {
   const [selectedImage, setSelectedImage] = useState();
   const [selectedVideo, setSelectedVideo] = useState();
   const [isLoading, setLoading] = useState(false);
+  const dispatch = useDispatch();
 
   const formik = useFormik({
     initialValues: {
@@ -41,6 +43,7 @@ const CreatePostModal = ({ open, closeHandler }) => {
     },
     onSubmit: (values) => {
       console.log("formik values", values);
+      dispatch(createPostAction(values));
     },
   });
 
