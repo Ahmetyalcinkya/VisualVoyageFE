@@ -5,6 +5,7 @@ import {
   CardContent,
   CardHeader,
   CardMedia,
+  Divider,
   IconButton,
   Typography,
 } from "@mui/material";
@@ -22,6 +23,12 @@ import { API_BASE_URL } from "../../Config/api";
 
 const PostCard = ({ post }) => {
   const [user, setUser] = useState(null);
+  const [showComments, setShowComments] = useState(false);
+
+  const showCommentHandler = () => {
+    setShowComments(!showComments);
+  };
+
   useEffect(() => {
     axios
       .get(`${API_BASE_URL}/users/${post.userId}`)
@@ -63,7 +70,7 @@ const PostCard = ({ post }) => {
           <IconButton>
             {true ? <FavoriteIcon /> : <FavoriteBorderIcon />}
           </IconButton>
-          <IconButton>
+          <IconButton onClick={showCommentHandler}>
             <ChatIcon />
           </IconButton>
           <IconButton>
@@ -76,6 +83,37 @@ const PostCard = ({ post }) => {
           </IconButton>
         </div>
       </CardActions>
+      {showComments && (
+        <section>
+          <div className="flex items-center space-x-5 mx-3 my-5">
+            <Avatar sx={{}} />
+            <input
+              onKeyPress={(e) => {
+                if (e.key == "Enter") {
+                  console.log("Enter pressed *************", e.target.value);
+                }
+              }}
+              className="w-full outline-none bg-transparent border border-[#3b4054] rounded-full px-5 py-2"
+              placeholder="Write your comment..."
+              type="text"
+            />
+          </div>
+          <Divider />
+
+          <div className="mx-3 space-y-2 my-5 text-xs">
+            <div className="flex justify-between items-center">
+              <div className="flex items-center space-x-5">
+                <Avatar
+                  sx={{ height: "2rem", width: "2rem", fontSize: "0.8rem" }}
+                >
+                  A
+                </Avatar>
+                <p>nice image</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
     </Card>
   );
 };
