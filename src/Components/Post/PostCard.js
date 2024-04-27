@@ -27,9 +27,23 @@ const PostCard = ({ post }) => {
   const dispatch = useDispatch();
   const [user, setUser] = useState(null);
   const [showComments, setShowComments] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [comments, setComments] = useState(null);
 
   const showCommentHandler = () => {
     setShowComments(!showComments);
+    setLoading(true);
+    const offset = 0;
+    setTimeout(() => {
+      comments === null &&
+        axios
+          .get(`${API_BASE_URL}/comments/post/${post.id}/${offset}`)
+          .then((res) => {
+            setComments(res.data);
+            setLoading(false);
+          })
+          .catch((err) => console.log(err));
+    }, 2000);
   };
 
   const createCommentHandler = (content) => {
@@ -105,6 +119,7 @@ const PostCard = ({ post }) => {
                 if (e.key == "Enter") {
                   createCommentHandler(e.target.value);
                   console.log("Enter pressed *************", e.target.value);
+                  e.target.value = "";
                 }
               }}
               className="w-full outline-none bg-transparent border border-[#3b4054] rounded-full px-5 py-2"
@@ -114,16 +129,39 @@ const PostCard = ({ post }) => {
           </div>
           <Divider />
 
-          <div className="mx-3 space-y-2 my-5 text-xs">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center space-x-5">
-                {/* Comments will be fetched! */}
-                <Avatar
-                  sx={{ height: "2rem", width: "2rem", fontSize: "0.8rem" }}
-                >
-                  A
-                </Avatar>
-                <p>nice image</p>
+          <div className="px-3 space-y-2 py-5 text-xs">
+            <div className="flex justify-between items-center w-full">
+              <div className="flex flex-col justify-center items-center gap-y-6 w-full">
+                {/* Infinity scroll will be added to comment! */}
+                {comments !== null && comments.length > 0 ? (
+                  comments.map((comment) => (
+                    <div className="flex w-full items-center gap-x-4">
+                      <Avatar
+                        sx={{
+                          height: "2rem",
+                          width: "2rem",
+                          fontSize: "0.8rem",
+                        }}
+                      >
+                        {comment.user.firstName.slice(0, 1)}
+                      </Avatar>
+                      <div className="flex flex-col w-full">
+                        <p className="font-bold">@{comment.content}</p>
+                        {/* username will be here! */}
+                        <div className="flex justify-between items-center w-full">
+                          <p className="pl-2">{comment.content}</p>
+                          <p className="font-bold">
+                            {comment.createdAt.slice(0, 10)}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <h4 className="text-center font-bold text-sm">
+                    There is no comment yet.
+                  </h4>
+                )}
               </div>
             </div>
           </div>
