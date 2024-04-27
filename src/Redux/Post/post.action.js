@@ -17,7 +17,7 @@ import {
 export const createPostAction = (postData) => async (dispatch) => {
   dispatch({ type: CREATE_POST_REQUEST });
   try {
-    const data = await api.post("/api/posts/", postData);
+    const { data } = await api.post("/api/posts/", postData);
     dispatch({ type: CREATE_POST_SUCCESS, payload: data });
     console.log("Created post :", data);
   } catch (error) {
@@ -29,9 +29,9 @@ export const createPostAction = (postData) => async (dispatch) => {
 export const getAllPostsAction = () => async (dispatch) => {
   dispatch({ type: GET_ALL_POSTS_REQUEST });
   try {
-    const posts = await api.get("/posts/all");
-    dispatch({ type: GET_ALL_POSTS_SUCCESS, payload: posts.data });
-    console.log("Get all posts :", posts.data);
+    const { data } = await api.get("/posts/all");
+    dispatch({ type: GET_ALL_POSTS_SUCCESS, payload: data });
+    console.log("Get all posts :", data);
   } catch (error) {
     console.log("Get all posts error :", error);
     dispatch({ type: GET_ALL_POSTS_FAILURE, payload: error });
@@ -41,7 +41,7 @@ export const getAllPostsAction = () => async (dispatch) => {
 export const getUsersPostsAction = (userId) => async (dispatch) => {
   dispatch({ type: GET_USERS_POSTS_REQUEST });
   try {
-    const data = await api.get(`post/user${userId}`);
+    const { data } = await api.get(`post/user${userId}`);
     dispatch({ type: GET_USERS_POSTS_SUCCESS, payload: data });
     console.log("Get users posts :", data);
   } catch (error) {
@@ -53,7 +53,7 @@ export const getUsersPostsAction = (userId) => async (dispatch) => {
 export const likePostAction = (postId) => async (dispatch) => {
   dispatch({ type: LIKE_POST_REQUEST });
   try {
-    const data = await api.put(`api/posts/like/${postId}`);
+    const { data } = await api.put(`api/posts/like/${postId}`);
     dispatch({ type: LIKE_POST_SUCCESS, payload: data });
     console.log("Like post :", data);
   } catch (error) {

@@ -20,13 +20,26 @@ import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
 import axios from "axios";
 import { API_BASE_URL } from "../../Config/api";
+import { useDispatch } from "react-redux";
+import { createCommentAction } from "../../Redux/Comment/comment.action";
 
 const PostCard = ({ post }) => {
+  const dispatch = useDispatch();
   const [user, setUser] = useState(null);
   const [showComments, setShowComments] = useState(false);
 
   const showCommentHandler = () => {
     setShowComments(!showComments);
+  };
+
+  const createCommentHandler = (content) => {
+    const reqData = {
+      postId: post.id,
+      comment: {
+        content,
+      },
+    };
+    dispatch(createCommentAction(reqData));
   };
 
   useEffect(() => {
@@ -90,6 +103,7 @@ const PostCard = ({ post }) => {
             <input
               onKeyPress={(e) => {
                 if (e.key == "Enter") {
+                  createCommentHandler(e.target.value);
                   console.log("Enter pressed *************", e.target.value);
                 }
               }}
@@ -103,6 +117,7 @@ const PostCard = ({ post }) => {
           <div className="mx-3 space-y-2 my-5 text-xs">
             <div className="flex justify-between items-center">
               <div className="flex items-center space-x-5">
+                {/* Comments will be fetched! */}
                 <Avatar
                   sx={{ height: "2rem", width: "2rem", fontSize: "0.8rem" }}
                 >
