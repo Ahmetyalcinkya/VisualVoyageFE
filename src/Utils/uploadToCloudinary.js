@@ -16,9 +16,9 @@ export const uploadToCloudinary = async (pics, fileType) => {
     );
     console.log("Cloudinary response : ", res);
 
-    const fileData = await res.json;
-    console.log("Cloudinary url : ", fileData.url);
-    return fileData.url;
+    // const fileData = await res.json();
+    console.log("Cloudinary url : ", res.data.url);
+    return res.data.url;
   } else {
     console.log("Cloudinary error...");
   }

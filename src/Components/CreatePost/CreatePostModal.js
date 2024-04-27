@@ -51,7 +51,13 @@ const CreatePostModal = ({ open, closeHandler }) => {
     setLoading(false);
     formik.setFieldValue("image", imageUrl);
   };
-  const videoSelectHandler = () => {};
+  const videoSelectHandler = async (e) => {
+    setLoading(true);
+    const videoUrl = await uploadToCloudinary(e.target.files[0], "image");
+    setSelectedVideo(videoUrl);
+    setLoading(false);
+    formik.setFieldValue("video", videoUrl);
+  };
 
   return (
     <Modal
@@ -92,7 +98,7 @@ const CreatePostModal = ({ open, closeHandler }) => {
                   id="image-input"
                 />
                 <label htmlFor="image-input">
-                  <IconButton color="primary">
+                  <IconButton color="primary" component="span">
                     <ImageIcon />
                   </IconButton>
                 </label>
@@ -107,7 +113,7 @@ const CreatePostModal = ({ open, closeHandler }) => {
                   id="video-input"
                 />
                 <label htmlFor="video-input">
-                  <IconButton color="primary">
+                  <IconButton color="primary" component="span">
                     <VideoLibraryIcon />
                   </IconButton>
                 </label>
