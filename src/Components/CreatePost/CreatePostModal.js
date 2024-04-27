@@ -13,6 +13,7 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import ImageIcon from "@mui/icons-material/Image";
 import VideoLibraryIcon from "@mui/icons-material/VideoLibrary";
+import { uploadToCloudinary } from "../../Utils/uploadToCloudinary";
 
 const style = {
   position: "absolute",
@@ -33,11 +34,23 @@ const CreatePostModal = ({ open, closeHandler }) => {
   const [isLoading, setLoading] = useState(false);
 
   const formik = useFormik({
-    initialValues: {},
-    onSubmit: "",
+    initialValues: {
+      caption: "",
+      image: "",
+      video: "",
+    },
+    onSubmit: (values) => {
+      console.log("formik values", values);
+    },
   });
 
-  const imageSelectHandler = () => {};
+  const imageSelectHandler = async (e) => {
+    setLoading(true);
+    const imageUrl = await uploadToCloudinary(e.target.files[0], "image");
+    setSelectedImage(imageUrl);
+    setLoading(false);
+    formik.setFieldValue("image", imageUrl);
+  };
   const videoSelectHandler = () => {};
 
   return (
@@ -61,6 +74,7 @@ const CreatePostModal = ({ open, closeHandler }) => {
               </div>
             </div>
             <textarea
+              className="outline-none w-full my-3 p-2 bg-transparent border border-[#3b4054] rounded-lg"
               placeholder="Write caption..."
               name="caption"
               id=""
@@ -123,7 +137,7 @@ const CreatePostModal = ({ open, closeHandler }) => {
         <Backdrop
           sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
           open={isLoading}
-          onClick={handleClose}
+          onClick={"handleClose"}
         >
           <CircularProgress color="inherit" />
         </Backdrop>
