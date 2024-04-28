@@ -8,7 +8,7 @@ import {
 } from "./comment.actionType";
 
 const initialState = {
-  comments: [],
+  comment: null,
   loading: false,
   error: null,
 };
@@ -30,7 +30,7 @@ export const commentReducer = (state = initialState, action) => {
     case CREATE_COMMENT_SUCCESS:
       return {
         ...state,
-        comments: [action.payload, ...state.comments],
+        comment: action.payload,
         loading: false,
         error: null,
       };

@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import { getUserProfileAction } from "./Redux/Auth/auth.action";
 
 function App() {
-  const { auth } = useSelector((store) => store);
+  const authUser = useSelector((store) => store.auth.user);
   const dispatch = useDispatch();
   const jwt = localStorage.getItem("vv-jwt");
 
@@ -19,7 +19,7 @@ function App() {
       <Routes>
         <Route
           path="/*"
-          element={auth.user ? <HomePage /> : <Authentication />}
+          element={authUser ? <HomePage /> : <Authentication />}
         />
         <Route path="/message" element={<Message />} />
         <Route path="/*" element={<Authentication />} />

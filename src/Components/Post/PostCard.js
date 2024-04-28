@@ -29,32 +29,29 @@ const PostCard = ({ post }) => {
   const dispatch = useDispatch();
   const [user, setUser] = useState(null);
   const [showComments, setShowComments] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [comments, setComments] = useState([]);
   const [offset, setOffset] = useState(0);
   const [hasMore, setHasMore] = useState(true);
-  const { auth } = useSelector((store) => store);
+  const authUser = useSelector((store) => store.auth.user);
 
+  const fetchPostsComments = () => {
+    axios
+      .get(`${API_BASE_URL}/comments/post/${post.id}/${0}`)
+      .then((res) => {
+        setComments(res.data);
+        setOffset(offset + 10);
+        setHasMore(true);
+      })
+      .catch((error) =>
+        console.log("Get posts comments error :", error.response.message)
+      );
+  };
   const showCommentHandler = () => {
     setOffset(0);
     setShowComments(!showComments);
-    setLoading(true);
     if (!showComments) {
-      setTimeout(() => {
-        axios
-          .get(`${API_BASE_URL}/comments/post/${post.id}/${offset}`)
-          .then((res) => {
-            setComments(res.data);
-            if (offset < 10) {
-              setOffset(offset + 10);
-            }
-          })
-          .catch((error) =>
-            console.log("Get posts comments error :", error.response.message)
-          );
-      }, 200);
+      fetchPostsComments();
     }
-    setLoading(false);
   };
 
   const fetchNextComments = () => {
@@ -72,7 +69,6 @@ const PostCard = ({ post }) => {
         console.log("Get posts comments error :", error.response.message)
       );
   };
-
   const createCommentHandler = (content) => {
     const reqData = {
       postId: post.id,
@@ -81,6 +77,7 @@ const PostCard = ({ post }) => {
       },
     };
     dispatch(createCommentAction(reqData));
+    showCommentHandler();
   };
 
   const likePostHandler = () => {
@@ -135,7 +132,7 @@ const PostCard = ({ post }) => {
       <CardActions className="flex justify-between" disableSpacing>
         <div>
           <IconButton onClick={likePostHandler}>
-            {isLikedByReqUser(auth.user.id, post) ? (
+            {isLikedByReqUser(authUser.id, post) ? (
               <FavoriteIcon color="rgb(249, 24, 128)" />
             ) : (
               <FavoriteBorderIcon />
@@ -163,7 +160,6 @@ const PostCard = ({ post }) => {
                 if (e.key == "Enter") {
                   if (!(e.target.value === "")) {
                     createCommentHandler(e.target.value);
-                    console.log("Enter pressed *************", e.target.value);
                     e.target.value = "";
                   }
                 }
@@ -175,17 +171,16 @@ const PostCard = ({ post }) => {
           </div>
           <Divider />
 
-          <div
-            onScroll={fetchNextComments}
-            className="px-3 space-y-2 py-5 text-xs h-96 overflow-y-scroll"
-          >
+          <div id="scrollableDiv" className="h-96 overflow-y-scroll">
             <InfiniteScroll
-              dataLength={10 || 0}
+              dataLength={comments?.length}
+              next={fetchNextComments}
               loader={<h4>Loading....</h4>}
               hasMore={hasMore}
               endMessage={<p>You saw all comments.</p>}
               scrollThreshold={0.9}
-              className="flex flex-col justify-center items-center gap-y-6 w-full"
+              scrollableTarget="scrollableDiv"
+              className="flex flex-col justify-center items-center gap-y-6 w-full px-3 py-5 text-xs"
             >
               {comments !== null && comments.length > 0 ? (
                 comments.map((comment, index) => (
@@ -197,7 +192,7 @@ const PostCard = ({ post }) => {
                         fontSize: "0.8rem",
                       }}
                     >
-                      {comment.user.firstName.slice(0, 1)}
+                      {comment?.user?.firstName.slice(0, 1)}
                     </Avatar>
                     <div className="flex flex-col w-full">
                       <p className="font-bold">@{comment.content}</p>

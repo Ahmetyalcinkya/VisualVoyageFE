@@ -7,12 +7,9 @@ import CreateReelsForm from "../../Components/Reels/CreateReelsForm";
 import Reels from "../../Components/Reels/Reels";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import Profile from "../ProfilePage/Profile";
-import { useSelector } from "react-redux";
 
 const HomePage = () => {
   const location = useLocation();
-  const { auth } = useSelector((store) => store);
-  console.log("auth", auth);
 
   return (
     <div className="px-20">
