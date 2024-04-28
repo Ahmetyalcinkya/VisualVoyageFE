@@ -20,29 +20,26 @@ import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
 import axios from "axios";
 import { API_BASE_URL } from "../../Config/api";
-import { useDispatch } from "react-redux";
-import { createCommentAction } from "../../Redux/Comment/comment.action";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  createCommentAction,
+  getPostCommentsAction,
+} from "../../Redux/Comment/comment.action";
 
 const PostCard = ({ post }) => {
   const dispatch = useDispatch();
   const [user, setUser] = useState(null);
   const [showComments, setShowComments] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [comments, setComments] = useState(null);
+  const { comments } = useSelector((store) => store.comment);
 
   const showCommentHandler = () => {
     setShowComments(!showComments);
     setLoading(true);
     const offset = 0;
     setTimeout(() => {
-      comments === null &&
-        axios
-          .get(`${API_BASE_URL}/comments/post/${post.id}/${offset}`)
-          .then((res) => {
-            setComments(res.data);
-            setLoading(false);
-          })
-          .catch((err) => console.log(err));
+      comments.length === 0 && dispatch(getPostCommentsAction(post.id, offset));
+      setLoading(false);
     }, 2000);
   };
 
