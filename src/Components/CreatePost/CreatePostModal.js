@@ -44,6 +44,7 @@ const CreatePostModal = ({ open, closeHandler }) => {
     onSubmit: (values) => {
       console.log("formik values", values);
       dispatch(createPostAction(values));
+      closeHandler();
     },
   });
 
