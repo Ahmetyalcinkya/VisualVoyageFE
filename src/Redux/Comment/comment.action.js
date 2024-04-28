@@ -7,6 +7,9 @@ import {
   GET_POST_COMMENTS_FAILURE,
   GET_POST_COMMENTS_REQUEST,
   GET_POST_COMMENTS_SUCCESS,
+  LIKE_COMMENT_FAILURE,
+  LIKE_COMMENT_REQUEST,
+  LIKE_COMMENT_SUCCESS,
 } from "./comment.actionType";
 
 export const createCommentAction = (reqData) => async (dispatch) => {
