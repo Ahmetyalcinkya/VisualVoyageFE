@@ -15,8 +15,8 @@ const HomeRight = () => {
           <p className="text-xs font-semibold opacity-95">View All</p>
         </div>
         <div className="">
-          {popularUser.map((user) => (
-            <PopularUserCard user={user} />
+          {popularUser.map((user, index) => (
+            <PopularUserCard key={index} user={user} />
           ))}
         </div>
       </Card>

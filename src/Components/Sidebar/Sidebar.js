@@ -32,8 +32,9 @@ const Sidebar = () => {
           <span className="logo font-bold text-xl">Visual Voyage</span>
         </div>
         <div className="space-y-8">
-          {navigationMenu.map((item) => (
+          {navigationMenu.map((item, index) => (
             <div
+              key={index}
               onClick={() => navigateHandler(item.path)}
               className="flex space-x-3 items-center cursor-pointer"
             >

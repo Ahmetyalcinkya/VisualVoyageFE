@@ -19,10 +19,11 @@ import {
 import { red } from "@mui/material/colors";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { API_BASE_URL } from "../../Config/api";
 import { createCommentAction } from "../../Redux/Comment/comment.action";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { likePostAction } from "../../Redux/Post/post.action";
 
 const PostCard = ({ post }) => {
   const dispatch = useDispatch();
@@ -32,7 +33,7 @@ const PostCard = ({ post }) => {
   const [comments, setComments] = useState([]);
   const [offset, setOffset] = useState(0);
   const [hasMore, setHasMore] = useState(true);
-  // const { comments } = useSelector((store) => store.comment);
+  const { auth } = useSelector((store) => store);
 
   const showCommentHandler = () => {
     setOffset(0);
@@ -82,6 +83,19 @@ const PostCard = ({ post }) => {
     dispatch(createCommentAction(reqData));
   };
 
+  const likePostHandler = () => {
+    dispatch(likePostAction(post.id));
+  };
+
+  const isLikedByReqUser = (reqUserId, post) => {
+    if (post.liked !== null) {
+      for (let user of post.liked) {
+        if (reqUserId === user.id) return true;
+      }
+    }
+    return false;
+  };
+
   useEffect(() => {
     axios
       .get(`${API_BASE_URL}/users/${post.userId}`)
@@ -120,8 +134,12 @@ const PostCard = ({ post }) => {
       </CardContent>
       <CardActions className="flex justify-between" disableSpacing>
         <div>
-          <IconButton>
-            {true ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+          <IconButton onClick={likePostHandler}>
+            {isLikedByReqUser(auth.user.id, post) ? (
+              <FavoriteIcon color="rgb(249, 24, 128)" />
+            ) : (
+              <FavoriteBorderIcon />
+            )}
           </IconButton>
           <IconButton onClick={showCommentHandler}>
             <ChatIcon />

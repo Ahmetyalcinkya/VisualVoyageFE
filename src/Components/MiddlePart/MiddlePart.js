@@ -35,8 +35,8 @@ const MiddlePart = () => {
           </Avatar>
           <p>New</p>
         </div>
-        {users.map((user) => (
-          <StoryCircle user={user} />
+        {users.map((user, index) => (
+          <StoryCircle key={index} user={user} />
         ))}
       </section>
       <Card className="p-5 mt-5">
@@ -81,7 +81,8 @@ const MiddlePart = () => {
         </div>
       </Card>
       <div className="mt-5 space-y-5">
-        {posts.length > 0 && posts?.map((post) => <PostCard post={post} />)}
+        {posts.length > 0 &&
+          posts?.map((post, index) => <PostCard key={index} post={post} />)}
       </div>
       <div>
         <CreatePostModal open={open} closeHandler={closeHandler} />
