@@ -22,28 +22,54 @@ import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { API_BASE_URL } from "../../Config/api";
 import { createCommentAction } from "../../Redux/Comment/comment.action";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 const PostCard = ({ post }) => {
   const dispatch = useDispatch();
   const [user, setUser] = useState(null);
   const [showComments, setShowComments] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [comments, setComments] = useState(null);
+  const [comments, setComments] = useState([]);
+  const [offset, setOffset] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
   // const { comments } = useSelector((store) => store.comment);
 
   const showCommentHandler = () => {
+    setOffset(0);
     setShowComments(!showComments);
     setLoading(true);
-    const offset = 0;
-    setTimeout(() => {
-      axios
-        .get(`${API_BASE_URL}/comments/post/${post.id}/${offset}`)
-        .then((res) => setComments(res.data))
-        .catch((error) =>
-          console.log("Get posts comments error :", error.response.message)
-        );
-    }, 200);
+    if (!showComments) {
+      setTimeout(() => {
+        axios
+          .get(`${API_BASE_URL}/comments/post/${post.id}/${offset}`)
+          .then((res) => {
+            setComments(res.data);
+            if (offset < 10) {
+              setOffset(offset + 10);
+            }
+          })
+          .catch((error) =>
+            console.log("Get posts comments error :", error.response.message)
+          );
+      }, 200);
+    }
     setLoading(false);
+  };
+
+  const fetchNextComments = () => {
+    setOffset(offset + 10);
+    axios
+      .get(`${API_BASE_URL}/comments/post/${post.id}/${offset}`)
+      .then((res) => {
+        if (res.data.length === 0 || res.data === null) {
+          setHasMore(false);
+        } else {
+          setComments((prev) => [...prev, ...res.data]);
+        }
+      })
+      .catch((error) =>
+        console.log("Get posts comments error :", error.response.message)
+      );
   };
 
   const createCommentHandler = (content) => {
@@ -131,12 +157,21 @@ const PostCard = ({ post }) => {
           </div>
           <Divider />
 
-          <div className="px-3 space-y-2 py-5 text-xs">
-            <div className="flex flex-col justify-center items-center gap-y-6 w-full">
-              {/* Infinity scroll will be added to comment! */}
+          <div
+            onScroll={fetchNextComments}
+            className="px-3 space-y-2 py-5 text-xs h-96 overflow-y-scroll"
+          >
+            <InfiniteScroll
+              dataLength={10 || 0}
+              loader={<h4>Loading....</h4>}
+              hasMore={hasMore}
+              endMessage={<p>You saw all comments.</p>}
+              scrollThreshold={0.9}
+              className="flex flex-col justify-center items-center gap-y-6 w-full"
+            >
               {comments !== null && comments.length > 0 ? (
-                comments.map((comment) => (
-                  <div className="flex w-full items-center gap-x-4">
+                comments.map((comment, index) => (
+                  <div key={index} className="flex w-full items-center gap-x-4">
                     <Avatar
                       sx={{
                         height: "2rem",
@@ -163,7 +198,7 @@ const PostCard = ({ post }) => {
                   There is no comment yet.
                 </h4>
               )}
-            </div>
+            </InfiniteScroll>
           </div>
         </section>
       )}
