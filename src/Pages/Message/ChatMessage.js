@@ -1,6 +1,6 @@
 import React from "react";
 
-const ChatMessage = () => {
+const ChatMessage = ({ message }) => {
   return (
     <div
       className={`flex ${true ? "justify-start" : "justify-end"} text-white`}

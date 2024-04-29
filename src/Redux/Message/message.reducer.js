@@ -8,6 +8,9 @@ import {
   GET_ALL_CHATS_FAILURE,
   GET_ALL_CHATS_REQUEST,
   GET_ALL_CHATS_SUCCESS,
+  GET_CHATS_MESSAGES_FAILURE,
+  GET_CHATS_MESSAGES_REQUEST,
+  GET_CHATS_MESSAGES_SUCCESS,
 } from "./message.actionType";
 
 const initialState = {
@@ -23,6 +26,7 @@ export const messageReducer = (state = initialState, action) => {
     case CREATE_MESSAGE_REQUEST:
     case CREATE_CHAT_REQUEST:
     case GET_ALL_CHATS_REQUEST:
+    case GET_CHATS_MESSAGES_REQUEST:
       return {
         ...state,
         loading: true,
@@ -32,6 +36,11 @@ export const messageReducer = (state = initialState, action) => {
       return {
         ...state,
         message: action.payload,
+      };
+    case GET_CHATS_MESSAGES_SUCCESS:
+      return {
+        ...state,
+        messages: action.payload,
       };
     case CREATE_CHAT_SUCCESS:
       return {
@@ -46,6 +55,7 @@ export const messageReducer = (state = initialState, action) => {
     case CREATE_MESSAGE_FAILURE:
     case CREATE_CHAT_FAILURE:
     case GET_ALL_CHATS_FAILURE:
+    case GET_CHATS_MESSAGES_FAILURE:
       return {
         ...state,
         loading: false,

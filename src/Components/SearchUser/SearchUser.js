@@ -9,8 +9,6 @@ const SearchUser = () => {
   const dispatch = useDispatch();
   const searchUsers = useSelector((store) => store.auth.searchUsers);
 
-  console.log(searchUsers);
-
   const searchUserHandler = (e) => {
     setUsername(e.target.value);
     console.log("search user");
