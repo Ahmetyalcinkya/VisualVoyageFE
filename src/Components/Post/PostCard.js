@@ -85,7 +85,11 @@ const PostCard = ({ post }) => {
   };
 
   const isLikedByReqUser = (reqUserId, post) => {
-    if (post.liked !== null) {
+    if (
+      post.liked !== null &&
+      post.liked?.length > 0 &&
+      post.liked !== undefined
+    ) {
       for (let user of post.liked) {
         if (reqUserId === user.id) return true;
       }

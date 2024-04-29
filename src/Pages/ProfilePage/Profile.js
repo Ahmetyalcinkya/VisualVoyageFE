@@ -1,10 +1,12 @@
 import { Avatar, Box, Button, Card, Tab, Tabs } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import PostCard from "../../Components/Post/PostCard";
 import UserReelCard from "../../Components/Reels/UserReelCard";
 import { useSelector } from "react-redux";
 import ProfileModal from "./ProfileModal";
+import axios from "axios";
+import { API_BASE_URL } from "../../Config/api";
 
 const tabs = [
   {
@@ -24,13 +26,13 @@ const tabs = [
     name: "Repost",
   },
 ];
-const posts = [1, 2, 3, 4, 5];
 const reels = [1, 2, 3, 4, 5];
 const savedPosts = [1, 2, 3, 4, 5];
 
 const Profile = () => {
   const { user } = useSelector((store) => store.auth);
   const [value, setValue] = useState("post");
+  const [posts, setPosts] = useState(null);
 
   const [open, setOpen] = useState(false);
   const openHandler = () => setOpen(true);
@@ -39,6 +41,13 @@ const Profile = () => {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+
+  useEffect(() => {
+    axios
+      .get(`${API_BASE_URL}/posts/user/${user.id}`)
+      .then((res) => setPosts(res.data))
+      .catch((error) => console.log(error.response.message));
+  }, []);
   return (
     <Card className="my-10 w-[70%]">
       <div className="rounded-md">
@@ -105,25 +114,32 @@ const Profile = () => {
               indicatorColor="secondary"
               aria-label="secondary tabs example"
             >
-              {tabs.map((tab) => (
-                <Tab value={tab.value} label={tab.name} wrapped />
+              {tabs.map((tab, index) => (
+                <Tab key={index} value={tab.value} label={tab.name} wrapped />
               ))}
             </Tabs>
           </Box>
           <div className="flex justify-center">
             {value === "post" && (
               <div className="space-y-5 w-[70%] my-10">
-                {posts.map((post) => (
-                  <div className="border border-slate-100 rounded-lg">
-                    <PostCard post={post} />
-                  </div>
-                ))}
+                {posts?.length > 0 &&
+                  posts?.map((post, index) => (
+                    <div
+                      key={index}
+                      className="border border-slate-100 rounded-lg"
+                    >
+                      <PostCard post={post} />
+                    </div>
+                  ))}
               </div>
             )}
             {value === "reels" && (
               <div className="flex justify-center flex-wrap gap-2 my-10">
-                {reels.map((reel) => (
-                  <div className="border border-slate-100 rounded-lg">
+                {reels.map((reel, index) => (
+                  <div
+                    key={index}
+                    className="border border-slate-100 rounded-lg"
+                  >
                     <UserReelCard reel={reel} />
                   </div>
                 ))}
@@ -131,8 +147,11 @@ const Profile = () => {
             )}
             {value === "saved" && (
               <div className="space-y-5 w-[70%] my-10">
-                {savedPosts.map((post) => (
-                  <div className="border border-slate-100 rounded-lg">
+                {savedPosts.map((post, index) => (
+                  <div
+                    key={index}
+                    className="border border-slate-100 rounded-lg"
+                  >
                     <PostCard post={post} />
                   </div>
                 ))}
