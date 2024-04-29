@@ -126,6 +126,10 @@ const PostCard = ({ post }) => {
       />
       <CardContent>
         <Typography variant="body2" color="text.secondary">
+          <span className="font-bold">
+            @{user?.firstName + "" + user?.lastName}
+            {/* Username will be here ! */}
+          </span>{" "}
           {post.caption}
         </Typography>
       </CardContent>
@@ -175,7 +179,7 @@ const PostCard = ({ post }) => {
             <InfiniteScroll
               dataLength={comments?.length}
               next={fetchNextComments}
-              loader={<h4>Loading....</h4>}
+              loader={comments.length === 0 ? false : <h4>Loading....</h4>}
               hasMore={hasMore}
               endMessage={<p>You saw all comments.</p>}
               scrollThreshold={0.9}
