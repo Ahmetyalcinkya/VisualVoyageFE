@@ -1,8 +1,13 @@
 import MoreHoriz from "@mui/icons-material/MoreHoriz";
 import { Avatar, Card, CardHeader, IconButton } from "@mui/material";
 import React from "react";
+import { useSelector } from "react-redux";
 
-const UserChatCard = () => {
+const UserChatCard = ({ chat }) => {
+  const authUser = useSelector((store) => store.auth.user);
+  const messagingUser = chat.users[0];
+  const reqUser = chat.users[1];
+
   return (
     <Card>
       <CardHeader
@@ -24,7 +29,11 @@ const UserChatCard = () => {
           />
         }
         // Messaged user profile picture will be here!
-        title="User full name"
+        title={
+          authUser?.id === reqUser.id
+            ? messagingUser.firstName + " " + messagingUser.lastName
+            : reqUser.firstName + " " + reqUser.lastName
+        }
         subheader="New Message"
       ></CardHeader>
     </Card>

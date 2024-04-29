@@ -8,6 +8,9 @@ import {
   REGISTER_FAILURE,
   REGISTER_REQUEST,
   REGISTER_SUCCESS,
+  SEARCH_USER_FAILURE,
+  SEARCH_USER_REQUEST,
+  SEARCH_USER_SUCCESS,
   UPDATE_USER_PROFILE_FAILURE,
   UPDATE_USER_PROFILE_REQUEST,
   UPDATE_USER_PROFILE_SUCCESS,
@@ -18,6 +21,7 @@ const initialState = {
   error: null,
   loading: false,
   user: null,
+  searchUsers: [],
 };
 
 export const authReducer = (state = initialState, action) => {
@@ -26,6 +30,7 @@ export const authReducer = (state = initialState, action) => {
     case REGISTER_REQUEST:
     case GET_USER_PROFILE_REQUEST:
     case UPDATE_USER_PROFILE_REQUEST:
+    case SEARCH_USER_REQUEST:
       return { ...state, loading: true, error: null };
 
     case GET_USER_PROFILE_SUCCESS:
@@ -36,10 +41,18 @@ export const authReducer = (state = initialState, action) => {
     case REGISTER_SUCCESS:
       return { ...state, jwt: action.payload, loading: false, error: null };
 
+    case SEARCH_USER_SUCCESS:
+      return {
+        searchUsers: action.payload,
+        loading: false,
+        error: null,
+      };
+
     case LOGIN_FAILURE:
     case REGISTER_FAILURE:
     case GET_USER_PROFILE_FAILURE:
     case UPDATE_USER_PROFILE_FAILURE:
+    case SEARCH_USER_FAILURE:
       return { ...state, loading: false, error: action.paylaod };
 
     default:
