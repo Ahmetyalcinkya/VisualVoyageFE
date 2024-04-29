@@ -1,8 +1,11 @@
 import { Avatar, Card, CardHeader } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 
 const SearchUser = () => {
-  const searchUserHandler = () => {
+  const [username, setUsername] = useState("");
+
+  const searchUserHandler = (e) => {
+    setUsername(e.target.value);
     console.log("search user");
   };
 
@@ -19,22 +22,23 @@ const SearchUser = () => {
           placeholder="Search User"
           onChange={searchUserHandler}
         />
+        {username && (
+          <Card className="absolute w-full top-[4.5rem] z-10 cursor-pointer">
+            <CardHeader
+              onClick={() => {
+                clickHandler();
+                setUsername("");
+              }}
+              avatar={<Avatar />}
+              // Search user profile picture will be here!
+              title="Ahmet Can Yalçınkaya"
+              // Search User full name will be here!
+              subheader="@Ahmetyalcinkya"
+              // Search Username will be here!
+            />
+          </Card>
+        )}
       </div>
-      {true && (
-        <Card>
-          <CardHeader
-            onClick={() => {
-              clickHandler();
-            }}
-            avatar={<Avatar />}
-            // Search user profile picture will be here!
-            title="Ahmet Can Yalçınkaya"
-            // Search User full name will be here!
-            subheader="@Ahmetyalcinkya"
-            // Search Username will be here!
-          />
-        </Card>
-      )}
     </div>
   );
 };
