@@ -60,9 +60,11 @@ const Message = () => {
   const [stompClient, setStompClient] = useState(null);
 
   const sendMessageToServer = (newMessage) => {
+    console.log("gönderilen data : ", newMessage);
     if (stompClient && newMessage) {
       stompClient.send(
-        `/app/chat/${currentChat.id.toString()}`,
+        // `/app/chat/${currentChat?.id.toString()}`,
+        `/user/${currentChat.id}/private`,
         {},
         JSON.stringify(newMessage)
       );
@@ -77,6 +79,7 @@ const Message = () => {
   };
 
   const onMessageReceive = (payload) => {
+    console.log("received");
     const receivedMessage = JSON.parse(payload.body);
     console.log("message received from websocket....", receivedMessage);
     setExistMessages([...existMessages, receivedMessage]);
@@ -92,12 +95,16 @@ const Message = () => {
 
   useEffect(() => {
     if (stompClient && authUser && currentChat) {
+      console.log("stompClient", stompClient);
+      console.log("authUser", authUser);
+      console.log("currentChat", currentChat);
       const subscription = stompClient.subscribe(
         `/user/${currentChat.id}/private`,
+        // `/app/chat/${currentChat.id}`,
         onMessageReceive
       );
     }
-  }, []);
+  }, [stompClient, authUser, currentChat]);
 
   useEffect(() => {
     setExistMessages([...messages, createdMessage]);
