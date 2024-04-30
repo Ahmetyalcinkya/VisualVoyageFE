@@ -19,24 +19,32 @@ const initialValues = {
   email: "",
   password: "",
 };
-const validationSchema = {
+const validationSchema = Yup.object().shape({
+  firstName: Yup.string()
+    .min(3, "First name at least 3 characters")
+    .required("Please enter your first name"),
+  lastName: Yup.string()
+    .min(2, "Last name at least 2 characters")
+    .required("Please enter your last name"),
+  gender: Yup.string()
+    .oneOf(["male", "female"])
+    .required("Please pick a gender"),
   email: Yup.string()
     .email("Invalid email")
     .required("Please enter your email"),
   password: Yup.string()
     .min(6, "Password must be at least 6 characters")
     .required("Please enter your password"),
-};
+});
 
 const Register = () => {
-  const [formValues, setFormValues] = useState();
+  const jwt = useSelector((store) => store.auth.jwt);
   const [gender, setGender] = useState(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const submitHandler = (values) => {
     values.gender = gender;
-    console.log("submit handler", values);
     dispatch(registerUserAction({ data: values }));
   };
 
@@ -44,11 +52,16 @@ const Register = () => {
     setGender(e.target.value);
   };
 
+  useEffect(() => {
+    if (jwt) {
+      window.location.reload();
+    }
+  }, [jwt]);
   return (
     <>
       <Formik
         onSubmit={submitHandler}
-        // validationSchema={validationSchema}
+        validationSchema={validationSchema}
         initialValues={initialValues}
       >
         <Form className="space-y-5">
