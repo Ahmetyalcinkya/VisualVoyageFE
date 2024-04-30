@@ -54,7 +54,11 @@ const Profile = () => {
         <div className="h-[15rem]">
           <img
             className="w-full h-full rounded-t-lg"
-            src="https://cdn.pixabay.com/photo/2014/01/13/20/01/pebbles-243910_640.jpg"
+            src={
+              false
+                ? ""
+                : "https://cdn.pixabay.com/photo/2014/01/13/20/01/pebbles-243910_640.jpg"
+            }
             alt="CoverImage"
             // Cover image will be here!
           />
@@ -63,7 +67,7 @@ const Profile = () => {
           <Avatar
             className="transform -translate-y-24"
             sx={{ width: "10rem", height: "10rem" }}
-            src=""
+            src={""}
           />
           {/* User profile picture will be here! */}
           {true ? (

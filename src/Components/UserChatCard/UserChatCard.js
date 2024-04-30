@@ -34,7 +34,8 @@ const UserChatCard = ({ chat }) => {
             ? messagingUser.firstName + " " + messagingUser.lastName
             : reqUser.firstName + " " + reqUser.lastName
         }
-        subheader="New Message"
+        subheader="Username"
+        // Messaged username will be here!
       ></CardHeader>
     </Card>
   );

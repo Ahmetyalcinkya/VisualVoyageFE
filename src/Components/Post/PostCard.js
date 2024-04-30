@@ -123,7 +123,7 @@ const PostCard = ({ post }) => {
       <CardMedia
         component="img"
         height="194"
-        image={post.image}
+        image={post.image ? post.image : post.video}
         // image ? image : video
         // Post height should be fixed!
         alt="Paella dish"

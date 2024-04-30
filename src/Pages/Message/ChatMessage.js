@@ -23,7 +23,9 @@ const ChatMessage = ({ message }) => {
             src={message.image}
           />
         )}
-        <p className={`${true ? "py-2" : "py-1"}`}>{message?.content}</p>
+        <p className={`${isReqUsersMessage ? "py-2" : "py-1"}`}>
+          {message?.content}
+        </p>
       </div>
     </div>
   );

@@ -24,6 +24,7 @@ import { uploadToCloudinary } from "../../Utils/uploadToCloudinary";
 import SockJS from "sockjs-client";
 import { API_BASE_URL } from "../../Config/api";
 import Stomp from "stompjs";
+import { useNavigate } from "react-router-dom";
 
 const Message = () => {
   const [currentChat, setCurrentChat] = useState();
@@ -39,6 +40,11 @@ const Message = () => {
   const messages = useSelector((store) => store.message.messages);
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const goBack = () => {
+    navigate(-1);
+  };
 
   const imageSelectHandler = async (e) => {
     setLoading(true);
@@ -124,7 +130,7 @@ const Message = () => {
           <div className="flex h-full justify-between space-x-2">
             <div className="w-full">
               <div className="flex space-x-4 items-center py-5">
-                <IconButton>
+                <IconButton onClick={goBack}>
                   <ArrowBackIcon />
                 </IconButton>
                 <h1 className="text-xl font-bold">Home</h1>
