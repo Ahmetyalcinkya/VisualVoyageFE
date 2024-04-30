@@ -1,4 +1,10 @@
-import { Avatar, Grid, IconButton } from "@mui/material";
+import {
+  Avatar,
+  Backdrop,
+  CircularProgress,
+  Grid,
+  IconButton,
+} from "@mui/material";
 import React, { useEffect, useState } from "react";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import AddIcCallIcon from "@mui/icons-material/AddIcCall";
@@ -19,7 +25,7 @@ import { uploadToCloudinary } from "../../Utils/uploadToCloudinary";
 const Message = () => {
   const [currentChat, setCurrentChat] = useState();
   const [loading, setLoading] = useState();
-  const [messages, setMessages] = useState();
+  const [messages, setMessages] = useState([]);
   const [selectedImage, setSelectedImage] = useState();
   const messagingUser = currentChat?.users[0];
   const reqUser = currentChat?.users[1];
@@ -27,6 +33,7 @@ const Message = () => {
   const chats = useSelector((store) => store.message.chats);
   const authUser = useSelector((store) => store.auth.user);
   const allMessages = useSelector((store) => store.message.messages);
+  const createdMessage = useSelector((store) => store.message.message);
   const dispatch = useDispatch();
 
   const imageSelectHandler = async (e) => {
@@ -35,7 +42,7 @@ const Message = () => {
     setSelectedImage(imageUrl);
     setLoading(false);
   };
-
+  // Mesajlar ters setleniyor düzeltilecek!
   const createMessageHandler = (value) => {
     const message = {
       chatId: currentChat.id,
@@ -48,6 +55,10 @@ const Message = () => {
     currentChat && dispatch(getChatsMessagesAction(currentChat.id));
     setMessages(allMessages);
   }, [currentChat]);
+
+  useEffect(() => {
+    setMessages([...messages, createdMessage]);
+  }, [createdMessage]);
 
   useEffect(() => {
     dispatch(getAllChatsAction());
@@ -114,6 +125,13 @@ const Message = () => {
                   messages.map((message) => <ChatMessage message={message} />)}
               </div>
               <div className="sticky bottom-0 border-l">
+                {selectedImage && (
+                  <img
+                    className="w-[5rem] h-[5rem] object-cover px-2"
+                    src={selectedImage}
+                    alt=""
+                  />
+                )}
                 <div className="py-5 flex items-center justify-center space-x-5 px-4">
                   <Avatar />
                   {/* Auth user profile picture will be here! */}
@@ -122,6 +140,7 @@ const Message = () => {
                       if (e.key === "Enter" && e.target.value) {
                         createMessageHandler(e.target.value);
                         e.target.value = "";
+                        setSelectedImage("");
                       }
                     }}
                     type="text"
@@ -151,6 +170,12 @@ const Message = () => {
           )}
         </Grid>
       </Grid>
+      <Backdrop
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={loading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </div>
   );
 };

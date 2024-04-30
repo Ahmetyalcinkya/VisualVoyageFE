@@ -1,20 +1,29 @@
 import React from "react";
+import { useSelector } from "react-redux";
 
 const ChatMessage = ({ message }) => {
+  const authUser = useSelector((store) => store.auth.user);
+
+  const isReqUsersMessage = authUser.id === message.userId;
+
   return (
     <div
-      className={`flex ${true ? "justify-start" : "justify-end"} text-white`}
+      className={`flex ${
+        isReqUsersMessage ? "justify-end" : "justify-start"
+      } text-white`}
     >
       <div
         className={`p-1 ${
-          true ? "rounded-md" : "px-5 rounded-full"
+          message.image ? "rounded-md" : "px-5 rounded-full"
         } bg-[#191c29]`}
       >
-        {true && (
-          <img className="w-[12rem] h-[17rem] object-cover rounded-md" />
+        {message.image && (
+          <img
+            className="w-[12rem] h-[17rem] object-cover rounded-md"
+            src={message.image}
+          />
         )}
-        {/* message image will be here! */}
-        <p className={`${true ? "py-2" : "py-1"}`}>message</p>
+        <p className={`${true ? "py-2" : "py-1"}`}>{message.content}</p>
       </div>
     </div>
   );
