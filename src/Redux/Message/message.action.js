@@ -14,13 +14,14 @@ import {
   GET_CHATS_MESSAGES_SUCCESS,
 } from "./message.actionType";
 
-export const createMessageAction = (message) => async (dispatch) => {
+export const createMessageAction = (reqData) => async (dispatch) => {
   dispatch({ type: CREATE_MESSAGE_REQUEST });
   try {
     const { data } = await api.post(
-      `/api/message/chat/${message.chatId}`,
-      message
+      `/api/message/chat/${reqData.message.chatId}`,
+      reqData.message
     );
+    reqData.sendMessageToServer(data);
     console.log("Created message: ", data);
     dispatch({ type: CREATE_MESSAGE_SUCCESS, payload: data });
   } catch (error) {

@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 const ChatMessage = ({ message }) => {
   const authUser = useSelector((store) => store.auth.user);
 
-  const isReqUsersMessage = authUser.id === message.userId;
+  const isReqUsersMessage = authUser.id === message?.userId;
 
   return (
     <div
@@ -14,16 +14,16 @@ const ChatMessage = ({ message }) => {
     >
       <div
         className={`p-1 ${
-          message.image ? "rounded-md" : "px-5 rounded-full"
+          message?.image ? "rounded-md" : "px-5 rounded-full"
         } bg-[#191c29]`}
       >
-        {message.image && (
+        {message?.image && (
           <img
             className="w-[12rem] h-[17rem] object-cover rounded-md"
             src={message.image}
           />
         )}
-        <p className={`${true ? "py-2" : "py-1"}`}>{message.content}</p>
+        <p className={`${true ? "py-2" : "py-1"}`}>{message?.content}</p>
       </div>
     </div>
   );

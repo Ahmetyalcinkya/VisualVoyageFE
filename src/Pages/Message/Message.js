@@ -21,19 +21,24 @@ import {
 } from "../../Redux/Message/message.action";
 import ChatIcon from "@mui/icons-material/Chat";
 import { uploadToCloudinary } from "../../Utils/uploadToCloudinary";
+import SockJS from "sockjs-client";
+import { API_BASE_URL } from "../../Config/api";
+import Stomp from "stompjs";
 
 const Message = () => {
   const [currentChat, setCurrentChat] = useState();
   const [loading, setLoading] = useState();
-  const [messages, setMessages] = useState([]);
   const [selectedImage, setSelectedImage] = useState();
+  const [existMessages, setExistMessages] = useState([]);
+
   const messagingUser = currentChat?.users[0];
   const reqUser = currentChat?.users[1];
 
   const chats = useSelector((store) => store.message.chats);
   const authUser = useSelector((store) => store.auth.user);
-  const allMessages = useSelector((store) => store.message.messages);
+  const messages = useSelector((store) => store.message.messages);
   const createdMessage = useSelector((store) => store.message.message);
+
   const dispatch = useDispatch();
 
   const imageSelectHandler = async (e) => {
@@ -42,23 +47,71 @@ const Message = () => {
     setSelectedImage(imageUrl);
     setLoading(false);
   };
-  // Mesajlar ters setleniyor düzeltilecek!
+
   const createMessageHandler = (value) => {
     const message = {
       chatId: currentChat.id,
       content: value,
       image: selectedImage,
     };
-    dispatch(createMessageAction(message));
+    dispatch(createMessageAction({ message, sendMessageToServer }));
   };
-  useEffect(() => {
-    currentChat && dispatch(getChatsMessagesAction(currentChat.id));
-    setMessages(allMessages);
-  }, [currentChat]);
+
+  const [stompClient, setStompClient] = useState(null);
+
+  const sendMessageToServer = (newMessage) => {
+    if (stompClient && newMessage) {
+      stompClient.send(
+        `/app/chat/${currentChat.id.toString()}`,
+        {},
+        JSON.stringify(newMessage)
+      );
+    }
+  };
+
+  const onConnect = () => {
+    console.log("websocket connected.....");
+  };
+  const onErr = (error) => {
+    console.log("websocket error.....", error);
+  };
+
+  const onMessageReceive = (payload) => {
+    const receivedMessage = JSON.parse(payload.body);
+    console.log("message received from websocket....", receivedMessage);
+    setExistMessages([...existMessages, receivedMessage]);
+  };
 
   useEffect(() => {
-    setMessages([...messages, createdMessage]);
+    const sock = new SockJS(`${API_BASE_URL}/ws`);
+    const stomp = Stomp.over(sock);
+    setStompClient(stomp);
+
+    stomp.connect({}, onConnect, onErr);
+  }, []);
+
+  useEffect(() => {
+    if (stompClient && authUser && currentChat) {
+      const subscription = stompClient.subscribe(
+        `/user/${currentChat.id}/private`,
+        onMessageReceive
+      );
+    }
+  }, []);
+
+  useEffect(() => {
+    setExistMessages([...messages, createdMessage]);
   }, [createdMessage]);
+
+  useEffect(() => {
+    setExistMessages([...messages]);
+  }, [messages]);
+
+  useEffect(() => {
+    if (currentChat) {
+      dispatch(getChatsMessagesAction(currentChat.id));
+    }
+  }, [currentChat]);
 
   useEffect(() => {
     dispatch(getAllChatsAction());
@@ -86,7 +139,7 @@ const Message = () => {
                       <div
                         onClick={() => {
                           setCurrentChat(chat);
-                          setMessages(chat.messages);
+                          // setMessages(chat.messages);
                         }}
                       >
                         <UserChatCard key={index} chat={chat} />
@@ -122,7 +175,9 @@ const Message = () => {
               </div>
               <div className="hideScrollbar overflow-y-scroll h-[82vh] px-2 space-y-5 py-5">
                 {messages &&
-                  messages.map((message) => <ChatMessage message={message} />)}
+                  existMessages.map((message) => (
+                    <ChatMessage message={message} />
+                  ))}
               </div>
               <div className="sticky bottom-0 border-l">
                 {selectedImage && (
