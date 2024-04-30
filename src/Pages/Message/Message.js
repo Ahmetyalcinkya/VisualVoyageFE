@@ -37,7 +37,6 @@ const Message = () => {
   const chats = useSelector((store) => store.message.chats);
   const authUser = useSelector((store) => store.auth.user);
   const messages = useSelector((store) => store.message.messages);
-  const createdMessage = useSelector((store) => store.message.message);
 
   const dispatch = useDispatch();
 
@@ -68,6 +67,9 @@ const Message = () => {
         {},
         JSON.stringify(newMessage)
       );
+      if (newMessage.userId !== authUser.id) {
+        setExistMessages((prevMessages) => [...prevMessages, newMessage]);
+      }
     }
   };
 
@@ -79,10 +81,8 @@ const Message = () => {
   };
 
   const onMessageReceive = (payload) => {
-    console.log("received");
     const receivedMessage = JSON.parse(payload.body);
-    console.log("message received from websocket....", receivedMessage);
-    setExistMessages([...existMessages, receivedMessage]);
+    setExistMessages((prevMessages) => [...prevMessages, receivedMessage]);
   };
 
   useEffect(() => {
@@ -95,20 +95,13 @@ const Message = () => {
 
   useEffect(() => {
     if (stompClient && authUser && currentChat) {
-      console.log("stompClient", stompClient);
-      console.log("authUser", authUser);
-      console.log("currentChat", currentChat);
-      const subscription = stompClient.subscribe(
+      stompClient.subscribe(
         `/user/${currentChat.id}/private`,
         // `/app/chat/${currentChat.id}`,
         onMessageReceive
       );
     }
   }, [stompClient, authUser, currentChat]);
-
-  useEffect(() => {
-    setExistMessages([...messages, createdMessage]);
-  }, [createdMessage]);
 
   useEffect(() => {
     setExistMessages([...messages]);
@@ -146,7 +139,6 @@ const Message = () => {
                       <div
                         onClick={() => {
                           setCurrentChat(chat);
-                          // setMessages(chat.messages);
                         }}
                       >
                         <UserChatCard key={index} chat={chat} />
@@ -191,7 +183,7 @@ const Message = () => {
                   <img
                     className="w-[5rem] h-[5rem] object-cover px-2"
                     src={selectedImage}
-                    alt=""
+                    alt="selected-image"
                   />
                 )}
                 <div className="py-5 flex items-center justify-center space-x-5 px-4">
