@@ -30,7 +30,9 @@ const reels = [1, 2, 3, 4, 5];
 const savedPosts = [1, 2, 3, 4, 5];
 
 const Profile = () => {
-  const { user } = useSelector((store) => store.auth);
+  const { id } = useParams();
+  const [user, setUser] = useState(null);
+  const authUser = useSelector((store) => store.auth.user);
   const [value, setValue] = useState("post");
   const [posts, setPosts] = useState(null);
 
@@ -44,33 +46,42 @@ const Profile = () => {
 
   useEffect(() => {
     axios
-      .get(`${API_BASE_URL}/posts/user/${user.id}`)
-      .then((res) => setPosts(res.data))
-      .catch((error) => console.log(error.response.message));
+      .get(`${API_BASE_URL}/users/${id}`)
+      .then((res) => setUser(res.data))
+      .catch((error) => {
+        console.log(error.response.message);
+        setUser(undefined);
+      });
   }, []);
-  return (
+
+  useEffect(() => {
+    user &&
+      axios
+        .get(`${API_BASE_URL}/posts/user/${user?.id}`)
+        .then((res) => setPosts(res.data))
+        .catch((error) => console.log(error.response.message));
+  }, [user]);
+  return user !== undefined ? (
     <Card className="my-10 w-[70%]">
       <div className="rounded-md">
         <div className="h-[15rem]">
           <img
             className="w-full h-full rounded-t-lg"
             src={
-              false
-                ? ""
+              user?.coverPicture
+                ? user?.coverPicture
                 : "https://cdn.pixabay.com/photo/2014/01/13/20/01/pebbles-243910_640.jpg"
             }
             alt="CoverImage"
-            // Cover image will be here!
           />
         </div>
         <div className="px-5 flex justify-between items-start mt-5 h-[5rem]">
           <Avatar
             className="transform -translate-y-24"
             sx={{ width: "10rem", height: "10rem" }}
-            src={""}
+            src={user?.profilePicture ? user?.profilePicture : ""}
           />
-          {/* User profile picture will be here! */}
-          {true ? (
+          {authUser.id === user?.id ? (
             <Button
               onClick={openHandler}
               sx={{ borderRadius: "1.25rem" }}
@@ -87,26 +98,18 @@ const Profile = () => {
         <div className="p-5">
           <div className="">
             <h1 className="py-1 font-bold text-xl">
-              {user.firstName + " " + user.lastName}
-              {/* User full name will be here! */}
+              {user?.firstName + " " + user?.lastName}
             </h1>
-            <h1>
-              @
-              {user.firstName.toLowerCase() + "_" + user.lastName.toLowerCase()}{" "}
-              {/* Username will be here! */}
-            </h1>
+            <h1>@{user?.username}</h1>
           </div>
           <div className="flex gap-5 items-center py-3">
             <span>24 posts</span>
             {/* PostCount will be here! */}
-            <span>{user.followers.length} Followers</span>
-            <span>{user.followings.length} followings</span>
+            <span>{user?.followers.length} Followers</span>
+            <span>{user?.followings.length} followings</span>
           </div>
 
-          <div className="">
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-            {/* UserBiography will be here! */}
-          </div>
+          <div className="">{user?.biography}</div>
         </div>
         <section>
           <Box sx={{ width: "100%", borderBottom: 1, borderColor: "divider" }}>
@@ -166,9 +169,13 @@ const Profile = () => {
         </section>
       </div>
       <section>
-        <ProfileModal open={open} closeHandler={closeHandler} />
+        <ProfileModal open={open} closeHandler={closeHandler} user={user} />
       </section>
     </Card>
+  ) : (
+    <div className="w-full h-full flex items-center justify-center text-3xl font-bold">
+      The user you were looking for was not found!
+    </div>
   );
 };
 

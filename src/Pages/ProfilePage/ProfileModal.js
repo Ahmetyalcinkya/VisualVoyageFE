@@ -1,7 +1,6 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import { useDispatch } from "react-redux";
 import { useFormik } from "formik";
@@ -23,13 +22,16 @@ const style = {
   borderRadius: 3,
 };
 
-const ProfileModal = ({ open, closeHandler }) => {
+const ProfileModal = ({ open, closeHandler, user }) => {
   const dispatch = useDispatch();
 
   const formik = useFormik({
     initialValues: {
       firstName: "",
       lastName: "",
+      profilePicture: "",
+      coverPicture: "",
+      biography: "",
     },
     onSubmit: (values) => {
       dispatch(updateUserProfileAction(values));
@@ -68,7 +70,7 @@ const ProfileModal = ({ open, closeHandler }) => {
                 <Avatar
                   className="transform -translate-y-24"
                   sx={{ width: "10rem", height: "10rem" }}
-                  src=""
+                  src={user?.profilePicture}
                 />
               </div>
             </div>
@@ -78,6 +80,7 @@ const ProfileModal = ({ open, closeHandler }) => {
                 id="firstName"
                 name="firstName"
                 label="First Name"
+                placeholder={user?.firstName}
                 value={formik.values.firstName}
                 onChange={formik.handleChange}
               />
@@ -86,7 +89,17 @@ const ProfileModal = ({ open, closeHandler }) => {
                 id="lastName"
                 name="lastName"
                 label="Last Name"
+                placeholder={user?.lastName}
                 value={formik.values.lastName}
+                onChange={formik.handleChange}
+              />
+              <TextField
+                fullWidth
+                id="biography"
+                name="biography"
+                label="Biography"
+                placeholder={user?.biography}
+                value={formik.values.biography}
                 onChange={formik.handleChange}
               />
             </div>
