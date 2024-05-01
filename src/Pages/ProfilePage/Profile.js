@@ -1,12 +1,23 @@
-import { Avatar, Box, Button, Card, Tab, Tabs } from "@mui/material";
+import {
+  Avatar,
+  Backdrop,
+  Box,
+  Button,
+  Card,
+  CircularProgress,
+  Tab,
+  Tabs,
+} from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import PostCard from "../../Components/Post/PostCard";
 import UserReelCard from "../../Components/Reels/UserReelCard";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import ProfileModal from "./ProfileModal";
 import axios from "axios";
 import { API_BASE_URL } from "../../Config/api";
+import { uploadToCloudinary } from "../../Utils/uploadToCloudinary";
+import { updateUserProfileAction } from "../../Redux/Auth/auth.action";
 
 const tabs = [
   {
@@ -29,12 +40,17 @@ const tabs = [
 const reels = [1, 2, 3, 4, 5];
 const savedPosts = [1, 2, 3, 4, 5];
 
+let profilePicture = "";
+let coverPicture = "";
+
 const Profile = () => {
   const { id } = useParams();
   const [user, setUser] = useState(null);
   const authUser = useSelector((store) => store.auth.user);
   const [value, setValue] = useState("post");
   const [posts, setPosts] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
 
   const [open, setOpen] = useState(false);
   const openHandler = () => setOpen(true);
@@ -42,6 +58,22 @@ const Profile = () => {
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
+  };
+
+  const profilePictureSelectHandler = async (e) => {
+    setLoading(true);
+    profilePicture = await uploadToCloudinary(e.target.files[0], "image");
+    dispatch(updateUserProfileAction({ profilePicture: profilePicture }));
+    setLoading(false);
+    !loading && window.location.reload();
+  };
+
+  const coverPictureSelectHandler = async (e) => {
+    setLoading(true);
+    coverPicture = await uploadToCloudinary(e.target.files[0], "image");
+    dispatch(updateUserProfileAction({ coverPicture: coverPicture }));
+    setLoading(false);
+    !loading && window.location.reload();
   };
 
   useEffect(() => {
@@ -65,22 +97,64 @@ const Profile = () => {
     <Card className="my-10 w-[70%]">
       <div className="rounded-md">
         <div className="h-[15rem]">
-          <img
-            className="w-full h-full rounded-t-lg"
-            src={
-              user?.coverPicture
-                ? user?.coverPicture
-                : "https://cdn.pixabay.com/photo/2014/01/13/20/01/pebbles-243910_640.jpg"
-            }
-            alt="CoverImage"
-          />
+          {authUser.id === user?.id ? (
+            <>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={coverPictureSelectHandler}
+                className="hidden"
+                id="cover-input"
+              />
+              <label htmlFor="cover-input" className="cursor-pointer">
+                <img
+                  className="w-full h-full rounded-t-lg object-cover"
+                  src={
+                    user?.coverPicture
+                      ? user?.coverPicture
+                      : "https://cdn.pixabay.com/photo/2014/01/13/20/01/pebbles-243910_640.jpg"
+                  }
+                  alt="CoverImage"
+                />
+              </label>
+            </>
+          ) : (
+            <img
+              className="w-full h-full rounded-t-lg object-cover"
+              src={
+                user?.coverPicture
+                  ? user?.coverPicture
+                  : "https://cdn.pixabay.com/photo/2014/01/13/20/01/pebbles-243910_640.jpg"
+              }
+              alt="CoverImage"
+            />
+          )}
         </div>
         <div className="px-5 flex justify-between items-start mt-5 h-[5rem]">
-          <Avatar
-            className="transform -translate-y-24"
-            sx={{ width: "10rem", height: "10rem" }}
-            src={user?.profilePicture ? user?.profilePicture : ""}
-          />
+          {authUser.id === user?.id ? (
+            <>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={profilePictureSelectHandler}
+                className="hidden"
+                id="image-input"
+              />
+              <label htmlFor="image-input" className="cursor-pointer">
+                <Avatar
+                  className="transform -translate-y-24"
+                  sx={{ width: "10rem", height: "10rem" }}
+                  src={user?.profilePicture ? user?.profilePicture : ""}
+                />
+              </label>
+            </>
+          ) : (
+            <Avatar
+              className="transform -translate-y-24"
+              sx={{ width: "10rem", height: "10rem" }}
+              src={user?.profilePicture ? user?.profilePicture : ""}
+            />
+          )}
           {authUser.id === user?.id ? (
             <Button
               onClick={openHandler}
@@ -171,6 +245,12 @@ const Profile = () => {
       <section>
         <ProfileModal open={open} closeHandler={closeHandler} user={user} />
       </section>
+      <Backdrop
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={loading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </Card>
   ) : (
     <div className="w-full h-full flex items-center justify-center text-3xl font-bold">
