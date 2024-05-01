@@ -15,7 +15,7 @@ import UserReelCard from "../../Components/Reels/UserReelCard";
 import { useDispatch, useSelector } from "react-redux";
 import ProfileModal from "./ProfileModal";
 import axios from "axios";
-import { API_BASE_URL } from "../../Config/api";
+import { API_BASE_URL, api } from "../../Config/api";
 import { uploadToCloudinary } from "../../Utils/uploadToCloudinary";
 import { updateUserProfileAction } from "../../Redux/Auth/auth.action";
 
@@ -50,6 +50,8 @@ const Profile = () => {
   const [value, setValue] = useState("post");
   const [posts, setPosts] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [followerCount, setFollowerCount] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
   const dispatch = useDispatch();
 
   const [open, setOpen] = useState(false);
@@ -76,10 +78,30 @@ const Profile = () => {
     !loading && window.location.reload();
   };
 
+  const followUser = (id) => {
+    api
+      .put(`/api/users/follow/${id}`)
+      .then((res) => {
+        console.log(res.data);
+      })
+      .catch((err) => console.log(err.response.message));
+  };
+
+  const isUserFollowing = () => {
+    if (authUser.followings.includes(user?.id)) {
+      return true;
+    }
+    return false;
+  };
+  const userFollowingStatus = isUserFollowing();
+  const [follow, setFollow] = useState(userFollowingStatus);
+
   useEffect(() => {
     axios
       .get(`${API_BASE_URL}/users/${id}`)
-      .then((res) => setUser(res.data))
+      .then((res) => {
+        setUser(res.data);
+      })
       .catch((error) => {
         console.log(error.response.message);
         setUser(undefined);
@@ -92,6 +114,9 @@ const Profile = () => {
         .get(`${API_BASE_URL}/posts/user/${user?.id}`)
         .then((res) => setPosts(res.data))
         .catch((error) => console.log(error.response.message));
+    setFollowerCount(user?.followers.length);
+    setFollowingCount(user?.followings.length);
+    user && isUserFollowing();
   }, [user]);
   return user !== undefined ? (
     <Card className="my-10 w-[70%]">
@@ -163,8 +188,28 @@ const Profile = () => {
             >
               Edit Profile
             </Button>
+          ) : follow ? (
+            <Button
+              onClick={() => {
+                followUser(user?.id);
+                setFollowerCount(followerCount - 1);
+                setFollow(!follow);
+              }}
+              sx={{ borderRadius: "1.25rem" }}
+              variant="contained"
+            >
+              Following
+            </Button>
           ) : (
-            <Button sx={{ borderRadius: "1.25rem" }} variant="outlined">
+            <Button
+              onClick={() => {
+                followUser(user?.id);
+                setFollowerCount(followerCount + 1);
+                setFollow(!follow);
+              }}
+              sx={{ borderRadius: "1.25rem" }}
+              variant="outlined"
+            >
               Follow
             </Button>
           )}
@@ -179,8 +224,8 @@ const Profile = () => {
           <div className="flex gap-5 items-center py-3">
             <span>24 posts</span>
             {/* PostCount will be here! */}
-            <span>{user?.followers.length} Followers</span>
-            <span>{user?.followings.length} followings</span>
+            <span>{followerCount} Followers</span>
+            <span>{followingCount} followings</span>
           </div>
 
           <div className="">{user?.biography}</div>
