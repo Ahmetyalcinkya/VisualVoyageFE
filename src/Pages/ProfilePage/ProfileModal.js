@@ -61,9 +61,13 @@ const ProfileModal = ({ open, closeHandler, user }) => {
             <div>
               <div className="h-[15rem]">
                 <img
-                  className="w-full h-full rounded-t-md"
-                  src="https://cdn.pixabay.com/photo/2014/01/13/20/01/pebbles-243910_640.jpg"
-                  alt=""
+                  className="w-full h-full rounded-t-md object-cover"
+                  src={
+                    user?.coverPicture
+                      ? user?.coverPicture
+                      : "https://cdn.pixabay.com/photo/2014/01/13/20/01/pebbles-243910_640.jpg"
+                  }
+                  alt="cover-image"
                 />
               </div>
               <div className="pl-5">
