@@ -6,8 +6,8 @@ import {
   TextField,
 } from "@mui/material";
 import { ErrorMessage, Field, Form, Formik } from "formik";
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { registerUserAction } from "../../Redux/Auth/auth.action";
